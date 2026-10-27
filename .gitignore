@@ -1,0 +1,76 @@
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python package and build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# IDE and operating system
+.DS_Store
+.idea/
+.vscode/settings.json
+.vscode/*.log
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
+
+# User-uploaded documents
+uploads/
+storage/
+data/private/
+
+# Generated files
+exports/
+reports/generated/
+
+# Node.js and Next.js
+node_modules/
+.next/
+out/
+coverage/
+
+# Local n8n instance data
+.n8n/
+n8n_data/
+
+# Keep workflow definitions tracked
+!workflows/
+!workflows/*.json
+

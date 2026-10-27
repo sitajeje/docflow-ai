@@ -1,0 +1,278 @@
+{
+  "name": "DocFlow AI - Invoice Validation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9dd98da3-2a14-419e-bea2-c67b618edc8b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2923275-b999-4793-aa94-d14e3eae82d2",
+              "name": "vendor",
+              "value": "Demo Consulting SAS",
+              "type": "string"
+            },
+            {
+              "id": "2f1aea05-d87c-4ca5-b21a-9a60b97e9a52",
+              "name": "invoice_number",
+              "value": "INV-2026-001",
+              "type": "string"
+            },
+            {
+              "id": "806fc6fa-70f2-4d69-95d8-3a92a057818d",
+              "name": "subtotal",
+              "value": "100.00",
+              "type": "string"
+            },
+            {
+              "id": "68fdbfc4-e7d4-486f-9757-94acf51024b3",
+              "name": "vat",
+              "value": "20.00",
+              "type": "string"
+            },
+            {
+              "id": "9d3eb788-474e-4c40-9b8b-24fc4f57b2bd",
+              "name": "",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "92afafdc-600c-46b3-a5cb-43e42307b3a5",
+              "name": "total",
+              "value": "120.00",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0d3c479b-1c55-44e1-9276-8bdde530dca0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/invoices/validate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    vendor: $json.vendor,\n    invoice_number: $json.invoice_number,\n    subtotal: $json.subtotal,\n    vat: $json.vat,\n    total: $json.total\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "d4c38a9b-6b5f-45d2-bd0e-1820da982106",
+      "name": "HTTP Request",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "176ae2a6-41e9-4694-9160-536f044004ef",
+              "leftValue": "={{ $json.is_valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "e94470ad-58f7-4e54-b4c0-540770477b15",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e08bcd33-99ea-4ab3-98c0-a8d344dd44c2",
+              "name": "status",
+              "value": "validated",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        912,
+        -208
+      ],
+      "id": "e496e211-41d3-4e4d-8bfe-94febefba840",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e89b731c-2cc2-4b65-a013-e47e60e3bed9",
+              "name": "status",
+              "value": "review_required",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        912,
+        -16
+      ],
+      "id": "0c7ffe02-0b8a-4ab2-ba39-5d6440799cb0",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a32d8750-923d-44db-b835-8ddb35eb654d",
+              "name": "status",
+              "value": "system_error",
+              "type": "string"
+            },
+            {
+              "id": "93d7777e-92f6-4a5f-b8f4-0e0e6651f153",
+              "name": "source",
+              "value": "invoice_validation_api",
+              "type": "string"
+            },
+            {
+              "id": "acb864e1-1bc4-467f-ae17-718ac3e868a5",
+              "name": "message",
+              "value": "={{ $json.error?.message ?? \"API request failed\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        96
+      ],
+      "id": "98875669-2187-4b80-a1b4-0c020ed828e4",
+      "name": "Edit Fields3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a51d88c7-468e-4e03-992f-08a037451c8e",
+  "meta": {
+    "instanceId": "f664631ff70e5adb91dca8c5608f1c42a4afa8b2a081ada3156203b0b26729c1"
+  },
+  "nodeGroups": [],
+  "id": "2phRIhG8CVho2oNs",
+  "tags": []
+}
