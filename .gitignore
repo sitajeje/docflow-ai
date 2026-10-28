@@ -74,3 +74,5 @@ n8n_data/
 !workflows/
 !workflows/*.json
 
+# sample files
+samples/

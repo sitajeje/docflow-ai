@@ -43,6 +43,7 @@ def test_invalid_total():
 
     result = validate_invoice(invoice)
 
+    assert result.expected_total == Decimal("120.00")
     assert result.is_valid is False
     assert len(result.errors) == 1
 
@@ -93,3 +94,33 @@ def test_api_health():
 
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
+def test_zero_vat():
+    invoice = Invoice(
+        **make_invoice(
+            vat="0.00",
+            total="100.00",
+        )
+    )
+
+    result = validate_invoice(invoice)
+
+    assert result.is_valid is True
+    assert result.expected_total == Decimal("100.00")
+    assert result.errors == []
+    
+def test_too_many_decimal_places():
+    response = client.post(
+        "/invoices/validate",
+        json=make_invoice(subtotal="100.123"),
+    )
+
+    assert response.status_code == 422
+    
+def test_blank_vendor():
+    response = client.post(
+        "/invoices/validate",
+        json=make_invoice(vendor="   "),
+    )
+
+    assert response.status_code == 422
