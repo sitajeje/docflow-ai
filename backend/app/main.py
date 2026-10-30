@@ -2,6 +2,9 @@
 from fastapi import FastAPI
 from backend.app.api.invoices import router as invoice_router
 from backend.app.api.documents import router as document_router
+from backend.app.api.reviews import (
+    router as review_router,
+)
 
 app = FastAPI(
     title="DocFlow AI API",
@@ -11,6 +14,7 @@ app = FastAPI(
 
 app.include_router(invoice_router)
 app.include_router(document_router)
+app.include_router(review_router)
 
 @app.get("/health", tags=["Health"])
 def health_check():

@@ -1,0 +1,170 @@
+{
+  "name": "DocFlow AI - Invoice Review Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "docflow-review",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dec8fa0d-640a-48d9-b43a-8f10d1764092",
+      "name": "Webhook",
+      "webhookId": "a624ef94-014f-44d7-b8bf-1d99f2bb921c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "r4tm5Jh2ra2HG0Ju",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "ede9a47a-48c0-4dc9-b00c-7938c96b5bb0",
+              "leftValue": "={{ $json.body.status }}",
+              "rightValue": "pending_review",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "ec4512e1-01aa-473c-bb94-ef109ac57c52",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a8a00d15-5400-4511-a8ec-7239ebaa75a0",
+              "name": "review_id",
+              "value": "={{ $json.body.review_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ff47ca0c-e239-4600-a77c-09376e022568",
+              "name": "subject",
+              "value": "Invoice requires review",
+              "type": "string"
+            },
+            {
+              "id": "fa032024-b94f-4e0b-a3cc-55732117fc7e",
+              "name": "message",
+              "value": "={{ 'Review item: ' + $json.body.review_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "3d6c9f63-78bc-494c-8102-a07479d06db8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fromEmail": "sitajeje@gmail.com",
+        "toEmail": "sitajeje@hotmail.fr",
+        "subject": "DocFlow AI — Invoice requires review",
+        "html": "=A new invoice is waiting for review.\n\nReview ID: {{ $json.review_id }}\n\nPlease open the DocFlow AI review system\nto verify the extracted fields.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "95cd509b-ad3f-49f9-9709-819f29553825",
+      "name": "Send an Email",
+      "webhookId": "3a8dc415-8f5e-4cda-9076-ec0231069c36",
+      "credentials": {
+        "smtp": {
+          "id": "1m7k2oJHGyXhDrtl",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b9ea99d6-e162-4306-bd7e-d38dc1036aa6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "beaaa6378700e119719a5b760272d569273a4f11e00ac4acf44dbff75b0ae3e4"
+  },
+  "nodeGroups": [],
+  "id": "0mZ1YVwKqBRjV4Ib",
+  "tags": []
+}
