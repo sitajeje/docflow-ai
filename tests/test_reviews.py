@@ -146,3 +146,30 @@ def test_audit_history(client):
 
     assert response.status_code == 200
     assert response.json()[0]["action"] == "created"
+
+
+def test_list_reviews(client):
+    review = create_sample_review(client)
+
+    response = client.get(
+        "/review-items?limit=30",
+        headers=API_HEADERS,
+    )
+
+    assert response.status_code == 200
+
+    reviews = response.json()
+    assert len(reviews) == 1
+    assert reviews[0]["id"] == review["id"]
+
+
+def test_get_review_source(client):
+    review = create_sample_review(client)
+
+    response = client.get(
+        f"/review-items/{review['id']}/source",
+        headers=API_HEADERS,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["markdown"] == SAMPLE_MARKDOWN

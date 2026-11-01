@@ -76,3 +76,11 @@ n8n_data/
 
 # sample files
 samples/
+
+# Next.js local environment
+frontend/.env.local
+frontend/.env.*.local
+
+# Next.js build artifacts
+frontend/.next/
+frontend/node_modules/

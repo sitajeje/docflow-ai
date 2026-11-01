@@ -407,3 +407,45 @@ def notify_reviewer(
         "review_id": review.id,
         "notification": "accepted_by_webhook",
     }
+
+@router.get(
+    "",
+    dependencies=[Depends(require_api_key)],
+)
+def list_reviews(
+    limit: int = 30,
+    db: Session = Depends(get_db),
+):
+    # Bound the result count for the local MVP
+    if not 1 <= limit <= 100:
+        raise HTTPException(
+            status_code=422,
+            detail="Limit must be between 1 and 100.",
+        )
+
+    reviews = db.scalars(
+        select(InvoiceReview)
+        .order_by(
+            InvoiceReview.created_at.desc(),
+            InvoiceReview.id.desc(),
+        )
+        .limit(limit)
+    ).all()
+
+    return [serialize_review(item) for item in reviews]
+
+
+@router.get(
+    "/{review_id}/source",
+    dependencies=[Depends(require_api_key)],
+)
+def get_review_source(
+    review_id: str,
+    db: Session = Depends(get_db),
+):
+    review = get_review_or_404(review_id, db)
+
+    return {
+        "review_id": review.id,
+        "markdown": review.source_markdown,
+    }
