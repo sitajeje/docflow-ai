@@ -147,7 +147,7 @@ Create `.env` in the repository root (do **not** commit it):
 
 ```dotenv
 GEMINI_API_KEY=replace_with_your_key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 DATABASE_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/postgres?sslmode=require
 DOCFLOW_API_KEY=replace_with_random_secret
 DOCFLOW_REVIEWER_KEY=replace_with_another_random_secret
